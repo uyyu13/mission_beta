@@ -300,23 +300,56 @@
 
     .message.error { color: #c62828; }
     .message.success { color: #2e7d32; }
-
-    .hint {
-      margin-top: 4px;
-      padding: 6px 0;
+    
+    /* 힌트 토글 스타일 */
+    .hint-area {
+      margin-top: 8px;
+    }
+    .hint-area details {
+      border: 1px solid #c4b5a5;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.5);
+      overflow: hidden;
+      margin-top: 8px;
+      color: var(--text-main);
+    }
+    .hint-area summary {
+      padding: 8px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      list-style: none; /* 기본 삼각형 제거 */
+    }
+    .hint-area summary:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.8);
+    }
+    .hint-area summary::before {
+        content: "▶";
+        display: inline-block;
+        font-size: 0.7rem;
+        margin-right: 8px;
+        transition: transform 0.1s ease;
+    }
+    .hint-area details[open] summary::before {
+        transform: rotate(90deg);
+    }
+    .hint-content {
+      padding: 8px 10px;
       font-size: 0.8rem;
-      color: var(--text-sub);
+      background: var(--paper);
+      border-top: 1px solid #e2ddd4;
+      white-space: pre-line;
     }
 
-    /* ⭐ 눈에 띄게 강조된 힌트 스타일 ⭐ */
-    .hint.active {
-      font-weight: 600;
-      color: var(--highlight-text);
-      background-color: var(--highlight-yellow);
-      border-radius: 4px;
-      padding: 8px 10px;
-      margin-top: 8px;
-      border: 1px solid var(--highlight-text);
+    /* 프롤로그 힌트 강조 스타일 */
+    .hint-area.active details {
+        border-color: var(--highlight-text);
+        box-shadow: 0 0 5px rgba(253, 224, 71, 0.7);
+    }
+    .hint-area.active summary {
+        background: var(--highlight-yellow);
+        color: var(--highlight-text);
     }
 
     .clear-block {
@@ -404,14 +437,14 @@
           <div class="paper-header-left">
             <div class="paper-label">FIELD NOTES</div>
             <div class="paper-title">
-              산골버려진 계란연구소 — 필드 로그
+              코드명: 에그 노이즈 (Code: Egg Noise) — 필드 로그
             </div>
           </div>
           <div class="paper-header-right">
             <div class="stage-pill" id="stageLabel">
-              STAGE 1 / 6
+              STAGE 1 / 20
             </div>
-            <div id="progressText">0 / 6 CLEARED</div>
+            <div id="progressText">0 / 20 CLEARED</div>
           </div>
         </div>
 
@@ -433,7 +466,13 @@
           <input id="answer" type="tel" inputmode="numeric" autocomplete="off" />
           <button id="submitBtn">SUBMIT</button>
           <div id="message" class="message"></div>
-          <div id="hint" class="hint"></div>
+          
+          <div id="hintArea" class="hint-area">
+             <details>
+                <summary id="hintSummary">힌트 보기</summary>
+                <div class="hint-content" id="hintContent"></div>
+             </details>
+          </div>
         </div>
 
         <div class="clear-block" id="clearBlock">
@@ -512,27 +551,27 @@
 당신은 그 공명을 따라, 카페로 향한다.
 
 (바닥의 QR코드를 찍어 문제를 확인하세요.)`,
-        answer: "상록",
+        answer: "상록", // 정답 코드 유지
         hint: "한글, QR코드를 찍고 얻은 정답을 입력하세요."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 3 (인덱스 2): 1장. 잔재 파동이 깨어나다 (내용 채워야 함)
+      // ⭐ STAGE 3 (인덱스 2): 1장. 잔재 파동이 깨어나다
       // ----------------------------------------------------
       {
         subtitle: "1장. 잔재 파동이 깨어나다",
-        text: `수첩이 요구한 답을 적자, 종이 위에 희미한 선 하나가 천천히 떠올랐다. 
+        text: `수첩이 요구한 답을 적자, 종이 위에 희미한 선 하나가 천천히 떠올랐다. 
 먹이 번진 것도, 오래된 흔적도 아닌, 마치 지금 ‘생겨나는’ 것처럼 선명해졌다.
 
 당신은 손가락을 조심스레 가까이 대보았다.
 선은 그의 움직임에 반응하듯 미세하게 떨렸다.
-지도처럼 보이기도 했고, 파동이 흐르는 경로처럼도 보였다. 
+지도처럼 보이기도 했고, 파동이 흐르는 경로처럼도 보였다. 
 
 하지만 무엇보다 기이했던 것은,
 이 선이 정적인 기록물이 아니라, 실시간으로 변화하는 지시 문양이라는 사실이었다.
 
-이때 주머니 속 아티팩트가 낮게 울렸다. 
-기계음도, 금속성 진동도 아닌 깊은 파동의 울림. 
-감응자의 신경을 건드리는 미세한 떨림이 척추를 타고 올라왔다. 
+이때 주머니 속 아티팩트가 낮게 울렸다. 
+기계음도, 금속성 진동도 아닌 깊은 파동의 울림. 
+감응자의 신경을 건드리는 미세한 떨림이 척추를 타고 올라왔다. 
 아티팩트는 수첩의 변화와 완전히 동기화되는 듯했다.
 
 변화가 생긴 아티팩트를 살핀 당신.
@@ -540,48 +579,65 @@
 그곳은 언덕 아래 편의점으로 이어져 있었다.
 
 (바닥의 QR코드를 찍어 문제를 확인하세요.)`,
-        answer: "프러포즈 계단",
+        answer: "프러포즈 계단", // 정답 코드 유지
         hint: "한글, QR코드를 찍고 얻은 정답을 입력하세요."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 4 (인덱스 3): 2장. 첫문양이 깨어난 순간 (내용 채워야 함)
+      // ⭐ STAGE 4 (인덱스 3): 2장. 첫문양이 깨어난 순간
       // ----------------------------------------------------
       {
         subtitle: "2장. 첫문양이 깨어난 순간",
-        text: `여기에 시나리오 2장 내용을 채워주세요. (기존 3장 내용)`,
+        text: `여기에 시나리오 2장 내용을 채워주세요.`,
         answer: "2",
         hint: "2장의 정답을 입력하세요."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 5 (인덱스 4): 3장. 공진의 첫폭발 (내용 채워야 함)
+      // ⭐ STAGE 5 (인덱스 4): 3장. 공진의 첫폭발
       // ----------------------------------------------------
       {
         subtitle: "3장. 공진의 첫폭발",
-        text: `여기에 시나리오 3장 내용을 채워주세요. (기존 4장 내용)`,
+        text: `여기에 시나리오 3장 내용을 채워주세요.`,
         answer: "code4",
         hint: "3장의 정답을 입력하세요."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 6 (인덱스 5): 4장/5장 (내용 채워야 함)
+      // ⭐ STAGE 6 (인덱스 5): 4장. 고대생명체의 잔재흔적 / 5장. 문양언어의 등장
       // ----------------------------------------------------
       {
         subtitle: "4장. 고대생명체의 잔재흔적 / 5장. 문양언어의 등장",
-        text: `여기에 시나리오 4장 내용을 채워주세요. (기존 5장 내용)`,
+        text: `여기에 시나리오 4장 내용을 채워주세요.`,
         answer: "code5",
         hint: "4장 / 5장의 정답을 입력하세요."
-      }
+      },
+      // ----------------------------------------------------
+      // ⭐ STAGE 7 ~ 20 (나머지 확장된 챕터)
+      // ----------------------------------------------------
+      { subtitle: "6장. 확장 챕터 6", text: `여기에 챕터 내용을 채워주세요.`, answer: "code6", hint: "6장의 정답을 입력하세요." },
+      { subtitle: "7장. 확장 챕터 7", text: `여기에 챕터 내용을 채워주세요.`, answer: "code7", hint: "7장의 정답을 입력하세요." },
+      { subtitle: "8장. 확장 챕터 8", text: `여기에 챕터 내용을 채워주세요.`, answer: "code8", hint: "8장의 정답을 입력하세요." },
+      { subtitle: "9장. 확장 챕터 9", text: `여기에 챕터 내용을 채워주세요.`, answer: "code9", hint: "9장의 정답을 입력하세요." },
+      { subtitle: "10장. 확장 챕터 10", text: `여기에 챕터 내용을 채워주세요.`, answer: "code10", hint: "10장의 정답을 입력하세요." },
+      { subtitle: "11장. 확장 챕터 11", text: `여기에 챕터 내용을 채워주세요.`, answer: "code11", hint: "11장의 정답을 입력하세요." },
+      { subtitle: "12장. 확장 챕터 12", text: `여기에 챕터 내용을 채워주세요.`, answer: "code12", hint: "12장의 정답을 입력하세요." },
+      { subtitle: "13장. 확장 챕터 13", text: `여기에 챕터 내용을 채워주세요.`, answer: "code13", hint: "13장의 정답을 입력하세요." },
+      { subtitle: "14장. 확장 챕터 14", text: `여기에 챕터 내용을 채워주세요.`, answer: "code14", hint: "14장의 정답을 입력하세요." },
+      { subtitle: "15장. 확장 챕터 15", text: `여기에 챕터 내용을 채워주세요.`, answer: "code15", hint: "15장의 정답을 입력하세요." },
+      { subtitle: "16장. 확장 챕터 16", text: `여기에 챕터 내용을 채워주세요.`, answer: "code16", hint: "16장의 정답을 입력하세요." },
+      { subtitle: "17장. 확장 챕터 17", text: `여기에 챕터 내용을 채워주세요.`, answer: "code17", hint: "17장의 정답을 입력하세요." },
+      { subtitle: "18장. 확장 챕터 18", text: `여기에 챕터 내용을 채워주세요.`, answer: "code18", hint: "18장의 정답을 입력하세요." },
+      { subtitle: "19장. 확장 챕터 19", text: `여기에 챕터 내용을 채워주세요.`, answer: "code19", hint: "19장의 정답을 입력하세요." },
+      { subtitle: "20장. 최종 챕터 20", text: `모든 미션을 완수했습니다!`, answer: "code20", hint: "20장의 정답을 입력하세요." }
     ];
 
     const totalStages = puzzles.length;
     let currentStage = 0;
 
-    // ------------------------------------------------
-    // ✅ 이 부분이 올바르게 수정되었습니다.
     const stageLabelEl    = document.getElementById("stageLabel");
     const stageSubtitleEl = document.getElementById("stageSubtitle");
     const storyTextEl     = document.getElementById("storyText");
     const messageEl       = document.getElementById("message");
-    const hintEl          = document.getElementById("hint");
+    const hintAreaEl      = document.getElementById("hintArea"); // 힌트 영역 전체
+    const hintContentEl   = document.getElementById("hintContent"); // 힌트 내용
     const answerInputEl   = document.getElementById("answer");
     const submitBtnEl     = document.getElementById("submitBtn");
     const progressBarEl   = document.getElementById("progressBar");
@@ -589,7 +645,6 @@
     const answerAreaEl    = document.getElementById("answerArea");
     const clearBlockEl    = document.getElementById("clearBlock");
     const restartBtnEl    = document.getElementById("restartBtn");
-    // ------------------------------------------------
 
     function normalize(text) {
       return text.trim().replace(/\s/g, '').toLowerCase();
@@ -617,14 +672,20 @@
       answerAreaEl.style.display = "block";
       clearBlockEl.style.display = "none";
       
-      // 힌트 강조 설정: 프롤로그 1, 2일 때 강조 스타일 적용 (0, 1 인덱스)
+      // 힌트 내용 업데이트 및 강조 설정
+      hintContentEl.textContent = p.hint || "제공된 힌트가 없습니다.";
+      
+      // 프롤로그(인덱스 0, 1)만 힌트 강조 스타일 적용
       if (currentStage === 0 || currentStage === 1) {
-          hintEl.className = "hint active";
-          hintEl.textContent = p.hint || "";
+          hintAreaEl.classList.add("active");
       } else {
-          hintEl.className = "hint";
-          hintEl.textContent = "힌트: " + (p.hint || "없음");
+          hintAreaEl.classList.remove("active");
       }
+
+      // details 태그가 힌트 내용이 바뀔 때 자동으로 닫히도록 설정
+      const hintDetails = hintAreaEl.querySelector('details');
+      if (hintDetails) hintDetails.removeAttribute('open');
+      
 
       updateProgress();
       answerInputEl.focus();

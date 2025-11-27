@@ -182,14 +182,27 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 1px 6px; /* 패딩을 줄여 영역 축소 */
+      padding: 1px 6px;
       border-radius: 999px;
       border: 1px solid #c4b5a5;
-      font-size: 0.65rem; /* 폰트 크기 더 줄임 (0.7rem -> 0.65rem) */
+      font-size: 0.65rem;
       background: rgba(250, 247, 242, 0.95);
       color: var(--text-sub);
       text-transform: uppercase;
-      letter-spacing: 0.1em; /* 자간도 살짝 줄임 */
+      letter-spacing: 0.1em;
+    }
+    
+    .answer-label-pill { /* CODE/정답 Pill 스타일 */
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--text-main);
+      color: var(--paper);
+      font-size: 0.86rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+      margin-top: 4px;
     }
 
     .progress-wrap {
@@ -202,7 +215,7 @@
       border-radius: 999px;
       background: rgba(0,0,0,0.06);
       overflow: hidden;
-      display: none; /* 진행바 숨김 */
+      display: none;
     }
 
     .progress-bar-fill {
@@ -217,13 +230,21 @@
       font-size: 0.7rem;
       color: var(--text-sub);
       text-align: right;
-      display: none; /* 클리어 스테이지 표시 삭제 */
+      display: none;
     }
 
     .subtitle {
       font-size: 0.86rem;
       color: var(--text-sub);
       margin: 4px 0 6px;
+    }
+    
+    .subtitle-separator { /* 구분선 스타일 */
+        width: 100%;
+        height: 1px;
+        background: #e2ddd4;
+        margin: 8px 0 12px;
+        opacity: 0.6;
     }
 
     .story-text {
@@ -240,11 +261,7 @@
     }
 
     label {
-      display: block;
-      font-size: 0.86rem;
-      color: var(--text-main);
-      margin-bottom: 4px;
-      margin-top: 4px;
+        display: none; /* Pill 스타일로 대체되므로 원본 label 숨김 */
     }
 
     input[type="tel"] {
@@ -305,7 +322,7 @@
     /* ⭐ 정답 알림창 크게 강조 ⭐ */
     .message.success { 
       color: #2e7d32;
-      font-size: 1.2rem; /* 폰트 크기 크게 */
+      font-size: 1.2rem;
       font-weight: 700;
       padding: 8px 0;
       text-align: center;
@@ -449,28 +466,32 @@
           <div class="paper-header-left">
             <div class="paper-label">FIELD NOTES</div>
             <div class="paper-title">
-             코드명: 에그 노이즈 <br> (Code: Egg Noise)
+              코드명: 에그 노이즈 <br> (Code: Egg Noise)
             </div>
           </div>
           <div class="paper-header-right">
             <div class="stage-pill" id="stageLabel">
               STAGE 1 / 20
             </div>
-            </div>
+          </div>
         </div>
 
         <div class="progress-wrap">
           <div class="progress-bar-bg" style="display: none;"></div>
-          </div>
+        </div>
 
         <div class="subtitle" id="stageSubtitle">
           힌트를 읽고 현장에서 얻은 코드를 입력하세요.
         </div>
+        
+        <div class="subtitle-separator"></div>
+
         <div class="story-text" id="storyText">
           스테이지 내용이 여기에 표시됩니다.
         </div>
 
         <div id="answerArea">
+          <div class="answer-label-pill">CODE / 정답</div>
           <label for="answer">CODE / 정답</label>
           <input id="answer" type="tel" inputmode="numeric" autocomplete="off" />
           <button id="submitBtn">SUBMIT</button>
@@ -508,23 +529,14 @@
       // ----------------------------------------------------
       {
         subtitle: "프롤로그. 사라진 시대의 잔향",
-        text: `**고대 생명체가 사라진 시대**
-아주 오래전, 강촌 인근에는 지금은 기록에서 사라진 거대 비행 생명체가 존재했다는 전설만 흐릿하게 남아 있다. 
-현대 과학으로는 정체를 알 수 없는 생명체였고, 어느 순간 흔적 없이 사라졌다. 
-이 전설은 사실 여부도 불분명한 채 지역의 신화처럼만 전해진다.
+        text: `고대 생명체가 사라진 시대
+아주 오래전, 강촌 인근에는 지금은 기록에서 사라진 거대 비행 생명체가 존재했다는 전설만 흐릿하게 남아 있다. 현대 과학으로는 정체를 알 수 없는 생명체였고, 어느 순간 흔적 없이 사라졌다. 이 전설은 사실 여부도 불분명한 채 지역의 신화처럼만 전해진다.
 
 **현대의 이상 현상 – 감응자의 등장**
-최근 강촌 일대에서 '정체불명의 에너지 공진(Resonance)'이 급격히 증가한다. 
-레이더에는 주기적으로 신호가 찍히지만 기존 장비로는 분석되지 않는다. 
-그러던 중, 이 신호가 극소수의 인간에게만 감각적 자극을 주는 것이 발견된다.
-그들은 감응자(Sensor)라 불린다. 
+최근 강촌 일대에서 '정체불명의 에너지 공진(Resonance)'이 급격히 증가한다. 레이더에는 주기적으로 신호가 찍히지만 기존 장비로는 분석되지 않는다. 그러던 중, 이 신호가 극소수의 인간에게만 감각적 자극을 주는 것이 발견된다. 그들은 감응자(Sensor)라 불린다. 
 
 **중심에 놓인 물체 – 부화가 아닌 ‘각성’**
-강촌 산속 특정 지점에서 알처럼 생긴 동그란 결정체(Artifact)가 발견된다.
-따뜻하지도 차갑지도 않은 이 물체는 생체 반응도, 기계 반응도 아닌 독특한 파동을 내고 있다. 
-당초 학자들은 생명체의 알이라고 추측했으나,
-이후 분석 결과로는 ‘생명체적 신호’와 ‘지성적 패턴’이 동시에 존재하는, 
-정체불명의 유물이라는 결론이 내려진다.
+강촌 산속 특정 지점에서 알처럼 생긴 동그란 결정체(Artifact)가 발견된다. 따뜻하지도 차갑지도 않은 이 물체는 생체 반응도, 기계 반응도 아닌 독특한 파동을 내고 있다. 당초 학자들은 생명체의 알이라고 추측했으나, 이후 분석 결과 → ‘생명체적 신호’와 ‘지성적 패턴’이 동시에 존재하는, 정체불명의 유물이라는 결론이 내려진다.
 
 이제, 감응자 중 한 명으로서 당신은 현장으로 파견된다.`, 
         answer: "시작",
@@ -670,12 +682,7 @@
 
     function updateProgress() {
       const cleared = currentStage;
-      const total = totalStages; // totalStages 변수 재사용
-      const percent = (cleared / total) * 100;
-      
-      // 진행바와 클리어 스테이지 표기는 CSS에서 display: none 처리됨
-      // progressBarEl.style.width    = percent + "%"; 
-      // progressTextEl.textContent   = `${cleared} / ${total} CLEARED`; 
+      const total = totalStages;
       
       stageLabelEl.textContent     = `STAGE ${currentStage + 1} / ${total}`;
     }
@@ -714,9 +721,7 @@
     }
 
     function showClear() {
-      // 진행바/클리어 표시 삭제로 인해 updateProgress에서 progressText 관련 코드를 제거함
-      // progressTextEl.textContent  = `${totalStages} / ${totalStages} CLEARED`; // 이 코드 제거됨
-      stageLabelEl.textContent    = `GAME CLEARED`; // 최종 클리어 시 문구 변경
+      stageLabelEl.textContent    = `GAME CLEARED`;
       answerAreaEl.style.display  = "none";
       clearBlockEl.style.display  = "block";
     }
@@ -732,7 +737,7 @@
       }
 
       if (userAnswer === correct) {
-        messageEl.textContent = "✅ 정답입니다! 다음 장으로 이동합니다."; // 알림창 문구 수정
+        messageEl.textContent = "✅ 정답입니다! 다음 장으로 이동합니다.";
         messageEl.className   = "message success";
 
         submitBtnEl.disabled   = true;
@@ -749,7 +754,7 @@
           }
         }, 900);
       } else {
-        messageEl.textContent = "❌ 코드가 일치하지 않습니다. 다시 확인해 보세요."; // 알림창 문구 수정
+        messageEl.textContent = "❌ 코드가 일치하지 않습니다. 다시 확인해 보세요.";
         messageEl.className   = "message error";
       }
     }

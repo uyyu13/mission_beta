@@ -1,10 +1,465 @@
-<script>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Backwoods Field Notebook - Mobile Full</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg-gray: #111827;
+      --paper: #faf7f2;
+      --line: #e2ddd4;
+      --margin-line: #c4a58c;
+      --margin-line-new: #b8987b;
+      --text-main: #222222;
+      --text-sub: #6b7280;
+      --accent: #111111;
+      --accent-blue: #2563eb;
+      --highlight-yellow: #fde047;
+      --highlight-text: #854d0e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg-gray);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .notebook-card {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #020617;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .spiral-header {
+      padding: 12px 16px 8px;
+      background: linear-gradient(135deg, #020617, #111827);
+      color: #e5e7eb;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    .spiral-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .spiral-holes {
+      display: flex;
+      gap: 6px;
+    }
+
+    .spiral-hole {
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      background: #020617;
+      box-shadow:
+        0 0 0 2px #d4d4d4,
+        inset 0 0 3px rgba(0,0,0,0.9);
+      position: relative;
+    }
+
+    .spiral-wire {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 19px;
+      height: 3px;
+      border-radius: 999px;
+      background: #d4d4d4;
+      box-shadow:
+        0 2px 0 rgba(0,0,0,0.4),
+        0 -1px 0 rgba(255,255,255,0.7);
+    }
+
+    .spiral-wire.top { top: -6px; }
+    .spiral-wire.bottom { bottom: -6px; }
+
+    .lab-header-text {
+      text-align: right;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+
+    .lab-main-title {
+      margin-top: 4px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .lab-subtitle {
+      margin-top: 2px;
+      font-size: 0.8rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #d1d5db;
+    }
+
+    .paper-wrap {
+      flex: 1;
+      background: #111827;
+      padding: 10px 16px 16px;
+      overflow-y: auto;
+    }
+
+    .paper {
+      position: relative;
+      border-radius: 14px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          var(--paper) 0,
+          var(--paper) 24px,
+          var(--line) 25px
+        );
+      box-shadow:
+        0 8px 18px rgba(0,0,0,0.45),
+        0 0 0 1px rgba(0,0,0,0.25);
+      padding: 18px 18px 18px 40px;
+      min-height: calc(100vh - 110px);
+    }
+
+    .paper::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 28px;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--margin-line-new), transparent);
+      opacity: 0.9;
+    }
+
+    .paper-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .paper-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .paper-label {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .paper-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .paper-header-right {
+      text-align: right;
+      font-size: 0.72rem;
+      color: var(--text-sub);
+    }
+
+    .stage-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #c4b5a5;
+      font-size: 0.76rem;
+      background: rgba(250, 247, 242, 0.95);
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .progress-wrap {
+      margin: 4px 0 4px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-blue), #111827);
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      margin-top: 3px;
+      font-size: 0.76rem;
+      color: var(--text-sub);
+      text-align: right;
+    }
+
+    .subtitle {
+      font-size: 0.86rem;
+      color: var(--text-sub);
+      margin: 4px 0 6px;
+    }
+
+    .story-text {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      white-space: pre-line;
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+
+    /* 볼드 처리 및 글씨 크기 키우기 */
+    .story-text strong {
+      font-size: 1.05rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.86rem;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      margin-top: 4px;
+    }
+
+    input[type="tel"] {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #c4b5a5;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: rgba(255,255,255,0.98);
+      color: var(--text-main);
+    }
+
+    input[type="tel"]:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
+      background: #ffffff;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 8px;
+      padding: 9px 10px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 7px 16px rgba(0,0,0,0.35);
+      transition: transform 0.05s ease, filter 0.06s ease, box-shadow 0.1s ease;
+    }
+
+    button:active {
+      transform: translateY(1px);
+      filter: brightness(0.93);
+      box-shadow: 0 4px 9px rgba(0,0,0,0.4);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .message {
+      margin-top: 4px;
+      font-size: 0.82rem;
+      min-height: 1.2em;
+    }
+
+    .message.error { color: #c62828; }
+    .message.success { color: #2e7d32; }
+
+    .hint {
+      margin-top: 4px;
+      padding: 6px 0;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    /* ⭐ 눈에 띄게 강조된 힌트 스타일 ⭐ */
+    .hint.active {
+      font-weight: 600;
+      color: var(--highlight-text);
+      background-color: var(--highlight-yellow);
+      border-radius: 4px;
+      padding: 8px 10px;
+      margin-top: 8px;
+      border: 1px solid var(--highlight-text);
+    }
+
+    .clear-block {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      display: none;
+    }
+
+    .clear-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #2e7d32;
+      color: #2e7d32;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      background: rgba(222, 247, 222, 0.9);
+      margin-bottom: 4px;
+    }
+
+    .clear-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .clear-text {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .restart-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid #111827;
+      background: transparent;
+      color: #111827;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      cursor: pointer;
+    }
+
+    .restart-btn:active {
+      transform: translateY(1px);
+      filter: brightness(0.96);
+    }
+  </style>
+</head>
+<body>
+  <div class="notebook-card">
+    <div class="spiral-header">
+      <div class="spiral-row">
+        <div class="spiral-holes">
+          <div class="spiral-hole">
+            <div class="spiral-wire top"></div>
+            <div class="spiral-wire bottom"></div>
+          </div>
+          <div class="spiral-hole">
+            <div class="spiral-wire top"></div>
+            <div class="spiral-wire bottom"></div>
+          </div>
+          <div class="spiral-hole">
+            <div class="spiral-wire top"></div>
+            <div class="spiral-wire bottom"></div>
+          </div>
+        </div>
+        <div class="lab-header-text">
+          BACKWOODS RESEARCH INSTITUTE
+        </div>
+      </div>
+      <div class="lab-main-title">EGG FIELD LOG</div>
+      <div class="lab-subtitle">GANGCHON BASE</div>
+    </div>
+
+    <div class="paper-wrap">
+      <div class="paper">
+        <div class="paper-header">
+          <div class="paper-header-left">
+            <div class="paper-label">FIELD NOTES</div>
+            <div class="paper-title">
+              산골버려진 계란연구소 — 필드 로그
+            </div>
+          </div>
+          <div class="paper-header-right">
+            <div class="stage-pill" id="stageLabel">
+              STAGE 1 / 6
+            </div>
+            <div id="progressText">0 / 6 CLEARED</div>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar"></div>
+          </div>
+        </div>
+
+        <div class="subtitle" id="stageSubtitle">
+          힌트를 읽고 현장에서 얻은 코드를 입력하세요.
+        </div>
+        <div class="story-text" id="storyText">
+          스테이지 내용이 여기에 표시됩니다.
+        </div>
+
+        <div id="answerArea">
+          <label for="answer">CODE / 정답</label>
+          <input id="answer" type="tel" inputmode="numeric" autocomplete="off" />
+          <button id="submitBtn">SUBMIT</button>
+          <div id="message" class="message"></div>
+          <div id="hint" class="hint"></div>
+        </div>
+
+        <div class="clear-block" id="clearBlock">
+          <div class="clear-badge">
+            <span>🎉</span><span>ALL STAGES CLEARED</span>
+          </div>
+          <div class="clear-title">필드 로그 작성 완료</div>
+          <div class="clear-text">
+            모든 스테이지에서 수집한 코드가 기록되었습니다.<br />
+            이 노트를 들고 진행자를 찾아가 다음 지령을 받으세요.
+          </div>
+          <button class="restart-btn" id="restartBtn">
+            RESTART FROM STAGE 1
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
     const puzzles = [
       // ----------------------------------------------------
-      // ⭐ STAGE 1 (인덱스 0): 제목 수정됨
+      // ⭐ STAGE 1 (인덱스 0): 프롤로그. 사라진 시대의 잔향
       // ----------------------------------------------------
       {
-        subtitle: "프롤로그. 사라진 시대의 잔향", // 제목 수정됨
+        subtitle: "프롤로그. 사라진 시대의 잔향",
         text: `고대 생명체가 사라진 시대
 아주 오래전, 강촌 인근에는 지금은 기록에서 사라진 거대 비행 생명체가 존재했다는 전설만 흐릿하게 남아 있다. 현대 과학으로는 정체를 알 수 없는 생명체였고, 어느 순간 흔적 없이 사라졌다. 이 전설은 사실 여부도 불분명한 채 지역의 신화처럼만 전해진다.
 
@@ -19,10 +474,10 @@
         hint: "프롤로그를 모두 읽었다면 정답 칸에 '시작'이라고 입력해 주세요."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 2 (인덱스 1): 새로 추가된 페이지 1 (내용 채움)
+      // ⭐ STAGE 2 (인덱스 1): 프롤로그. 수첩을 줍다
       // ----------------------------------------------------
       {
-        subtitle: "프롤로그. 수첩을 줍다", // 새로 추가된 페이지
+        subtitle: "프롤로그. 수첩을 줍다",
         text: `열차가 떠난 뒤, 잔열이 남은 바람이 플랫폼을 스치고 지나갔다. 
 감응자로서 파견된 연구원, 당신은 배낭을 고쳐 매며 주변을 살폈다.
 보고된 공진 신호는 모두 이곳, 강촌역을 중심으로 퍼져 나가고 있었다. 
@@ -57,41 +512,41 @@
 당신은 그 공명을 따라, 카페로 향한다.
 
 (바닥의 QR코드를 찍어 문제를 확인하세요.)`,
-        answer: "코드입력", // 현장 정답으로 변경 필요
+        answer: "코드입력",
         hint: "QR코드를 찍고 얻은 정답을 입력하세요."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 3 (인덱스 2): 장 번호 변경 (기존 2장 -> 1장)
+      // ⭐ STAGE 3 (인덱스 2): 1장. 잔재 파동이 깨어나다 (내용 채워야 함)
       // ----------------------------------------------------
       {
-        subtitle: "1장. 잔재 파동이 깨어나다", // 장 번호 변경 (기존 2장 -> 1장)
+        subtitle: "1장. 잔재 파동이 깨어나다",
         text: `여기에 '1장' 시나리오 내용을 채워주세요. (기존 2장 내용)`,
-        answer: "code2", // 기존 2장 정답 유지
+        answer: "code2",
         hint: "1장의 정답을 입력하세요."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 4 (인덱스 3): 장 번호 변경 (기존 3장 -> 2장)
+      // ⭐ STAGE 4 (인덱스 3): 2장. 첫문양이 깨어난 순간 (내용 채워야 함)
       // ----------------------------------------------------
       {
-        subtitle: "2장. 첫문양이 깨어난 순간", // 장 번호 변경
+        subtitle: "2장. 첫문양이 깨어난 순간",
         text: `여기에 시나리오 2장 내용을 채워주세요. (기존 3장 내용)`,
         answer: "code3",
         hint: "2장의 정답을 입력하세요."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 5 (인덱스 4): 장 번호 변경 (기존 4장 -> 3장)
+      // ⭐ STAGE 5 (인덱스 4): 3장. 공진의 첫폭발 (내용 채워야 함)
       // ----------------------------------------------------
       {
-        subtitle: "3장. 공진의 첫폭발", // 장 번호 변경
+        subtitle: "3장. 공진의 첫폭발",
         text: `여기에 시나리오 3장 내용을 채워주세요. (기존 4장 내용)`,
         answer: "code4",
         hint: "3장의 정답을 입력하세요."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 6 (인덱스 5): 장 번호 변경 (기존 5장/6장 -> 4장/5장)
+      // ⭐ STAGE 6 (인덱스 5): 4장/5장 (내용 채워야 함)
       // ----------------------------------------------------
       {
-        subtitle: "4장. 고대생명체의 잔재흔적 / 5장. 문양언어의 등장", // 장 번호 변경
+        subtitle: "4장. 고대생명체의 잔재흔적 / 5장. 문양언어의 등장",
         text: `여기에 시나리오 4장 내용을 채워주세요. (기존 5장 내용)`,
         answer: "code5",
         hint: "4장 / 5장의 정답을 입력하세요."
@@ -101,8 +556,10 @@
     const totalStages = puzzles.length;
     let currentStage = 0;
 
+    // ------------------------------------------------
+    // ✅ 이 부분이 올바르게 수정되었습니다.
     const stageLabelEl    = document.getElementById("stageLabel");
-    const stageSubtitleEl = document.getElementById("stageSubtitle"); // ⬅️ 이 부분을 수정했습니다.
+    const stageSubtitleEl = document.getElementById("stageSubtitle");
     const storyTextEl     = document.getElementById("storyText");
     const messageEl       = document.getElementById("message");
     const hintEl          = document.getElementById("hint");
@@ -113,9 +570,9 @@
     const answerAreaEl    = document.getElementById("answerArea");
     const clearBlockEl    = document.getElementById("clearBlock");
     const restartBtnEl    = document.getElementById("restartBtn");
+    // ------------------------------------------------
 
     function normalize(text) {
-      // 띄어쓰기를 없애고 소문자로 변환 (정확한 정답 처리를 위해)
       return text.trim().replace(/\s/g, '').toLowerCase();
     }
 
@@ -130,9 +587,8 @@
     function renderStage() {
       const p = puzzles[currentStage];
 
-      // stageSubtitleEl이 null이 아니기 때문에 이제 정상 작동합니다.
       stageSubtitleEl.textContent = p.subtitle || "현장 로그를 읽고 코드를 입력하세요.";
-      storyTextEl.innerHTML       = p.text || ""; 
+      storyTextEl.innerHTML       = p.text || "";
       messageEl.textContent       = "";
       messageEl.className         = "message";
 
@@ -142,7 +598,7 @@
       answerAreaEl.style.display = "block";
       clearBlockEl.style.display = "none";
       
-      // 힌트 강조 설정: 프롤로그 1, 2일 때 강조 스타일 적용
+      // 힌트 강조 설정: 프롤로그 1, 2일 때 강조 스타일 적용 (0, 1 인덱스)
       if (currentStage === 0 || currentStage === 1) {
           hintEl.className = "hint active";
           hintEl.textContent = p.hint || "";
@@ -164,7 +620,6 @@
     }
 
     function checkAnswer() {
-      // 입력값을 띄어쓰기 없이 소문자로 변환
       const userAnswer = normalize(answerInputEl.value);
       const correct    = normalize(puzzles[currentStage].answer || "");
 
@@ -180,10 +635,10 @@
 
         submitBtnEl.disabled   = true;
         answerInputEl.disabled = true;
-        submitBtnEl.textContent = "✔ NEXT LOADING..."; // 버튼 텍스트 변경
+        submitBtnEl.textContent = "✔ NEXT LOADING...";
 
         setTimeout(() => {
-          submitBtnEl.textContent = "SUBMIT"; // 버튼 텍스트 복원
+          submitBtnEl.textContent = "SUBMIT";
           if (currentStage >= totalStages - 1) {
             showClear();
           } else {
@@ -211,3 +666,5 @@
 
     renderStage();
   </script>
+</body>
+</html>

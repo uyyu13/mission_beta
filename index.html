@@ -1,459 +1,4 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <title>Backwoods Field Notebook - Mobile Full</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <style>
-    :root {
-      --bg-gray: #111827;
-      --paper: #faf7f2;
-      --line: #e2ddd4;
-      --margin-line: #c4a58c;
-      --margin-line-new: #b8987b; /* 마진 라인 색상 조정 */
-      --text-main: #222222;
-      --text-sub: #6b7280;
-      --accent: #111111;
-      --accent-blue: #2563eb;
-      --highlight-yellow: #fde047; /* 강조를 위한 새로운 색상 */
-      --highlight-text: #854d0e;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--bg-gray);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    .notebook-card {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      min-height: 100vh;
-      background: #020617;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .spiral-header {
-      padding: 12px 16px 8px;
-      background: linear-gradient(135deg, #020617, #111827);
-      color: #e5e7eb;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    }
-
-    .spiral-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .spiral-holes {
-      display: flex;
-      gap: 6px;
-    }
-
-    .spiral-hole {
-      width: 13px;
-      height: 13px;
-      border-radius: 999px;
-      background: #020617;
-      box-shadow:
-        0 0 0 2px #d4d4d4,
-        inset 0 0 3px rgba(0,0,0,0.9);
-      position: relative;
-    }
-
-    .spiral-wire {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 19px;
-      height: 3px;
-      border-radius: 999px;
-      background: #d4d4d4;
-      box-shadow:
-        0 2px 0 rgba(0,0,0,0.4),
-        0 -1px 0 rgba(255,255,255,0.7);
-    }
-
-    .spiral-wire.top { top: -6px; }
-    .spiral-wire.bottom { bottom: -6px; }
-
-    .lab-header-text {
-      text-align: right;
-      font-size: 0.72rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #9ca3af;
-    }
-
-    .lab-main-title {
-      margin-top: 4px;
-      font-size: 1.1rem; /* 글씨 크기 키움 */
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .lab-subtitle {
-      margin-top: 2px;
-      font-size: 0.8rem; /* 글씨 크기 키움 */
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: #d1d5db;
-    }
-
-    .paper-wrap {
-      flex: 1;
-      background: #111827;
-      padding: 10px 16px 16px; /* 좌우 패딩 증가 */
-      overflow-y: auto;
-    }
-
-    .paper {
-      position: relative;
-      border-radius: 14px;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          var(--paper) 0,
-          var(--paper) 24px,
-          var(--line) 25px
-        );
-      box-shadow:
-        0 8px 18px rgba(0,0,0,0.45),
-        0 0 0 1px rgba(0,0,0,0.25);
-      padding: 18px 18px 18px 40px; /* 패딩 조정 */
-      min-height: calc(100vh - 110px);
-    }
-
-    .paper::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 28px;
-      width: 2px;
-      background: linear-gradient(to bottom, transparent, var(--margin-line-new), transparent);
-      opacity: 0.9;
-    }
-
-    .paper-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 6px;
-    }
-
-    .paper-header-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .paper-label {
-      font-size: 0.8rem; /* 글씨 크기 키움 */
-      color: var(--text-sub);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .paper-title {
-      font-size: 1.05rem; /* 글씨 크기 키움 */
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .paper-header-right {
-      text-align: right;
-      font-size: 0.72rem;
-      color: var(--text-sub);
-    }
-
-    .stage-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid #c4b5a5;
-      font-size: 0.76rem; /* 글씨 크기 키움 */
-      background: rgba(250, 247, 242, 0.95);
-      color: var(--text-sub);
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
-
-    .progress-wrap {
-      margin: 4px 0 4px;
-    }
-
-    .progress-bar-bg {
-      width: 100%;
-      height: 4px;
-      border-radius: 999px;
-      background: rgba(0,0,0,0.06);
-      overflow: hidden;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent-blue), #111827);
-      transition: width 0.3s ease;
-    }
-
-    .progress-text {
-      margin-top: 3px;
-      font-size: 0.76rem; /* 글씨 크기 키움 */
-      color: var(--text-sub);
-      text-align: right;
-    }
-
-    .subtitle {
-      font-size: 0.86rem;
-      color: var(--text-sub);
-      margin: 4px 0 6px;
-    }
-
-    .story-text {
-      font-size: 0.95rem;
-      color: var(--text-main);
-      white-space: pre-line;
-      line-height: 1.75;
-      margin-bottom: 14px;
-    }
-
-    /* 볼드 처리 및 글씨 크기 키우기 */
-    .story-text strong {
-      font-size: 1.05rem;
-    }
-
-    label {
-      display: block;
-      font-size: 0.86rem;
-      color: var(--text-main);
-      margin-bottom: 4px;
-      margin-top: 4px;
-    }
-
-    input[type="tel"] { /* 타입 변경 반영 */
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: 1px solid #c4b5a5;
-      font-size: 0.95rem;
-      font-family: inherit;
-      background: rgba(255,255,255,0.98);
-      color: var(--text-main);
-    }
-
-    input[type="tel"]:focus {
-      outline: none;
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
-      background: #ffffff;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 8px;
-      padding: 9px 10px;
-      border-radius: 999px;
-      border: none;
-      background: var(--accent);
-      color: #ffffff;
-      font-size: 0.82rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 7px 16px rgba(0,0,0,0.35);
-      transition: transform 0.05s ease, filter 0.06s ease, box-shadow 0.1s ease;
-    }
-
-    button:active {
-      transform: translateY(1px);
-      filter: brightness(0.93);
-      box-shadow: 0 4px 9px rgba(0,0,0,0.4);
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: default;
-      box-shadow: none;
-    }
-
-    .message {
-      margin-top: 4px;
-      font-size: 0.82rem;
-      min-height: 1.2em;
-    }
-
-    .message.error { color: #c62828; }
-    .message.success { color: #2e7d32; }
-
-    .hint {
-      margin-top: 4px;
-      padding: 6px 0;
-      font-size: 0.8rem;
-      color: var(--text-sub);
-    }
-
-    /* ⭐ 눈에 띄게 강조된 힌트 스타일 ⭐ */
-    .hint.active {
-      font-weight: 600;
-      color: var(--highlight-text);
-      background-color: var(--highlight-yellow);
-      border-radius: 4px;
-      padding: 8px 10px;
-      margin-top: 8px;
-      border: 1px solid var(--highlight-text);
-    }
-
-    .clear-block {
-      margin-top: 12px;
-      font-size: 0.9rem;
-      color: var(--text-main);
-      display: none;
-    }
-
-    .clear-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid #2e7d32;
-      color: #2e7d32;
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      background: rgba(222, 247, 222, 0.9);
-      margin-bottom: 4px;
-    }
-
-    .clear-title {
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .clear-text {
-      font-size: 0.88rem;
-      color: var(--text-sub);
-      line-height: 1.6;
-    }
-
-    .restart-btn {
-      margin-top: 10px;
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid #111827;
-      background: transparent;
-      color: #111827;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      cursor: pointer;
-    }
-
-    .restart-btn:active {
-      transform: translateY(1px);
-      filter: brightness(0.96);
-    }
-  </style>
-</head>
-<body>
-  <div class="notebook-card">
-    <div class="spiral-header">
-      <div class="spiral-row">
-        <div class="spiral-holes">
-          <div class="spiral-hole">
-            <div class="spiral-wire top"></div>
-            <div class="spiral-wire bottom"></div>
-          </div>
-          <div class="spiral-hole">
-            <div class="spiral-wire top"></div>
-            <div class="spiral-wire bottom"></div>
-          </div>
-          <div class="spiral-hole">
-            <div class="spiral-wire top"></div>
-            <div class="spiral-wire bottom"></div>
-          </div>
-        </div>
-        <div class="lab-header-text">
-          BACKWOODS RESEARCH INSTITUTE
-        </div>
-      </div>
-      <div class="lab-main-title">EGG FIELD LOG</div>
-      <div class="lab-subtitle">GANGCHON BASE</div>
-    </div>
-
-    <div class="paper-wrap">
-      <div class="paper">
-        <div class="paper-header">
-          <div class="paper-header-left">
-            <div class="paper-label">FIELD NOTES</div>
-            <div class="paper-title">
-              산골버려진 계란연구소 — 필드 로그
-            </div>
-          </div>
-          <div class="paper-header-right">
-            <div class="stage-pill" id="stageLabel">
-              STAGE 1 / 6
-            </div>
-            <div id="progressText">0 / 6 CLEARED</div>
-          </div>
-        </div>
-
-        <div class="progress-wrap">
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill" id="progressBar"></div>
-          </div>
-        </div>
-
-        <div class="subtitle" id="stageSubtitle">
-          힌트를 읽고 현장에서 얻은 코드를 입력하세요.
-        </div>
-        <div class="story-text" id="storyText">
-          스테이지 내용이 여기에 표시됩니다.
-        </div>
-
-        <div id="answerArea">
-          <label for="answer">CODE / 정답</label>
-          <input id="answer" type="tel" inputmode="numeric" autocomplete="off" />
-          <button id="submitBtn">SUBMIT</button>
-          <div id="message" class="message"></div>
-          <div id="hint" class="hint"></div>
-        </div>
-
-        <div class="clear-block" id="clearBlock">
-          <div class="clear-badge">
-            <span>🎉</span><span>ALL STAGES CLEARED</span>
-          </div>
-          <div class="clear-title">필드 로그 작성 완료</div>
-          <div class="clear-text">
-            모든 스테이지에서 수집한 코드가 기록되었습니다.<br />
-            이 노트를 들고 진행자를 찾아가 다음 지령을 받으세요.
-          </div>
-          <button class="restart-btn" id="restartBtn">
-            RESTART FROM STAGE 1
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
+<script>
     const puzzles = [
       // ----------------------------------------------------
       // ⭐ STAGE 1 (인덱스 0): 제목 수정됨
@@ -488,13 +33,13 @@
 바람의 방향과도 맞지 않는, 설명하기 어려운 궤적이었다.
 당신은 무심코 허리를 굽혀 그것을 주워 들었다.
 
-수첩.
+**수첩.**
 강촌의 지도를 닮은 듯한 특이한 표지, 손끝에 전해지는 미세한 떨림. 
 마치 오랫동안 누군가를 기다려온 물건처럼 느껴졌다. 
 
 당신은 천천히 첫 페이지를 펼쳤다.
 
-<이 수첩을 줍는 자, 공진을 느낄 뿐 아니라 들을 수 있다.>
+**<이 수첩을 줍는 자, 공진을 느낄 뿐 아니라 들을 수 있다.>**
 문장과 동시에,
 귓속 깊은 곳에서 낮고 묵직한 파동이 울렸다. 
 보고서에서 묘사되던 그 감각.
@@ -505,15 +50,15 @@
 동시에 아티팩트 역시 공명했다.
 마치 그가 오기를 알고 있었다는 듯이.
 
-댱신은 이 수첩을 집어든 순간, 
-새로운 것이 시작되었다는 사실을 불현듯 깨달았다.
+이 수첩을 집어든 순간, 이미 조사가 아니라,
+**새로운 것이 시작되었다는 사실**을 불현듯 깨달았다.
 
 공명은 자연스레 앞의 카페로 향했다.
 당신은 그 공명을 따라, 카페로 향한다.
 
 (바닥의 QR코드를 찍어 문제를 확인하세요.)`,
-        answer: "상록", // 임시 정답 코드, 현장 정답으로 변경 필요
-        hint: "QR코드를 찍고 얻은 정답을 입력하세요." // 힌트 변경
+        answer: "코드입력", // 현장 정답으로 변경 필요
+        hint: "QR코드를 찍고 얻은 정답을 입력하세요."
       },
       // ----------------------------------------------------
       // ⭐ STAGE 3 (인덱스 2): 장 번호 변경 (기존 2장 -> 1장)
@@ -557,7 +102,7 @@
     let currentStage = 0;
 
     const stageLabelEl    = document.getElementById("stageLabel");
-    const stageSubtitleEl = document.getElementById("subtitle");
+    const stageSubtitleEl = document.getElementById("stageSubtitle"); // ⬅️ 이 부분을 수정했습니다.
     const storyTextEl     = document.getElementById("storyText");
     const messageEl       = document.getElementById("message");
     const hintEl          = document.getElementById("hint");
@@ -585,8 +130,9 @@
     function renderStage() {
       const p = puzzles[currentStage];
 
+      // stageSubtitleEl이 null이 아니기 때문에 이제 정상 작동합니다.
       stageSubtitleEl.textContent = p.subtitle || "현장 로그를 읽고 코드를 입력하세요.";
-      storyTextEl.innerHTML       = p.text || ""; // innerHTML로 변경하여 strong, img 태그를 인식하도록 함
+      storyTextEl.innerHTML       = p.text || ""; 
       messageEl.textContent       = "";
       messageEl.className         = "message";
 
@@ -596,19 +142,13 @@
       answerAreaEl.style.display = "block";
       clearBlockEl.style.display = "none";
       
-      // 힌트 강조 설정: 첫 프롤로그일 때만 강조된 스타일 적용
-      if (currentStage === 0) {
+      // 힌트 강조 설정: 프롤로그 1, 2일 때 강조 스타일 적용
+      if (currentStage === 0 || currentStage === 1) {
           hintEl.className = "hint active";
           hintEl.textContent = p.hint || "";
       } else {
-          // 새로 추가된 '수첩을 줍다' 페이지는 QR 코드를 찍어야 하므로 힌트를 강조 표시
-          if (currentStage === 1) {
-            hintEl.className = "hint active";
-            hintEl.textContent = p.hint || "";
-          } else {
-            hintEl.className = "hint";
-            hintEl.textContent = "힌트: " + (p.hint || "없음");
-          }
+          hintEl.className = "hint";
+          hintEl.textContent = "힌트: " + (p.hint || "없음");
       }
 
       updateProgress();
@@ -671,5 +211,3 @@
 
     renderStage();
   </script>
-</body>
-</html>

@@ -264,6 +264,7 @@
         display: none;
     }
 
+    /* 💡 input[type="text"]에 스타일 적용하도록 수정 */
     input[type="text"] {
       width: 100%;
       padding: 8px 10px;
@@ -281,6 +282,7 @@
       box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
       background: #ffffff;
     }
+    /* --------------------------------------------- */
 
     button {
       width: 100%;
@@ -455,7 +457,7 @@
         <div class="lab-header-text">
           BACKWOODS RESEARCH INSTITUTE
         </div>
-      </div>
+       </div>
       <div class="lab-main-title">CODE: EGG NOISE</div>
       <div class="lab-subtitle">GANGCHON BASE</div>
     </div>
@@ -471,7 +473,7 @@
           </div>
           <div class="paper-header-right">
             <div class="stage-pill" id="stageLabel">
-              STAGE 1 / 20
+              STAGE 1 / 19
             </div>
           </div>
         </div>
@@ -967,8 +969,8 @@
 문 안쪽으로 들어서자, 테마파크의 내부, 간판이 보였다.
 
 (벽면의 QR코드를 찍어 문제를 확인해주세요.)`,
-        answer: "느티나무",
-        hint: "한글, 가려진 곳에 위치한 단어를 쓰세요요."
+        answer: "102510",
+        hint: "숫자, 읽은 순서 그대로."
       },
       // ----------------------------------------------------
       // ⭐ STAGE 14 (인덱스 13): 12장. 숨겨진 글의 출현
@@ -996,7 +998,7 @@
 지금 막 중요한 진실의 문턱에 들어섰다는 것을 느꼈다.
 
 그때 연구소로부터 연락이 울렸다.
-강촌에 잠입해 일하고 있는, 
+강촌에 잠입해 일하고 있는, 
 비밀요원과의 소통으로 파동의 정체를 더 알아내라는 전언이었다.
 
 보고 받은 요원의 위치는 카페 THE1939.
@@ -1137,7 +1139,7 @@
         hint: "한글, 카페 안쪽에 위치하고 있습니다."
       },
       // ----------------------------------------------------
-      // ⭐ STAGE 19 (인덱스 18): 17장. 신성생명체의 잔상
+      // ⭐ STAGE 19 (인덱스 18): 최종 클리어 처리용
       // ----------------------------------------------------
       {
         subtitle: "최종 클리어", 
@@ -1150,19 +1152,19 @@
        const totalStages = puzzles.length;
     let currentStage = 0;
 
-    const stageLabelEl    = document.getElementById("stageLabel");
+    const stageLabelEl    = document.getElementById("stageLabel");
     const stageSubtitleEl = document.getElementById("stageSubtitle");
-    const storyTextEl     = document.getElementById("storyText");
-    const messageEl       = document.getElementById("message");
-    const hintAreaEl      = document.getElementById("hintArea");
-    const hintContentEl   = document.getElementById("hintContent");
-    const answerInputEl   = document.getElementById("answer");
-    const submitBtnEl     = document.getElementById("submitBtn");
-    const progressBarEl   = document.getElementById("progressBar");
-    const progressTextEl  = document.getElementById("progressText");
-    const answerAreaEl    = document.getElementById("answerArea");
-    const clearBlockEl    = document.getElementById("clearBlock");
-    const restartBtnEl    = document.getElementById("restartBtn");
+    const storyTextEl     = document.getElementById("storyText");
+    const messageEl       = document.getElementById("message");
+    const hintAreaEl      = document.getElementById("hintArea");
+    const hintContentEl   = document.getElementById("hintContent");
+    const answerInputEl   = document.getElementById("answer");
+    const submitBtnEl     = document.getElementById("submitBtn");
+    const progressBarEl   = document.getElementById("progressBar");
+    const progressTextEl  = document.getElementById("progressText");
+    const answerAreaEl    = document.getElementById("answerArea");
+    const clearBlockEl    = document.getElementById("clearBlock");
+    const restartBtnEl    = document.getElementById("restartBtn");
 
     function normalize(text) {
       return text.trim().replace(/\s/g, '').toLowerCase();
@@ -1172,20 +1174,20 @@
       const cleared = currentStage;
       const total = totalStages;
       
-      stageLabelEl.textContent     = `STAGE ${currentStage + 1} / ${total}`;
+      stageLabelEl.textContent     = `STAGE ${currentStage + 1} / ${total}`;
     }
 
     function renderStage() {
       const p = puzzles[currentStage];
 
       stageSubtitleEl.textContent = p.subtitle || "현장 로그를 읽고 코드를 입력하세요.";
-      storyTextEl.innerHTML       = p.text || "";
-      messageEl.textContent       = "";
-      messageEl.className         = "message";
+      storyTextEl.innerHTML       = p.text || "";
+      messageEl.textContent       = "";
+      messageEl.className         = "message";
 
-      answerInputEl.value    = "";
+      answerInputEl.value    = "";
       answerInputEl.disabled = false;
-      submitBtnEl.disabled   = false;
+      submitBtnEl.disabled   = false;
       answerAreaEl.style.display = "block";
       clearBlockEl.style.display = "none";
       
@@ -1212,26 +1214,26 @@
     }
 
     function showClear() {
-      stageLabelEl.textContent    = `GAME CLEARED`;
-      answerAreaEl.style.display  = "none";
-      clearBlockEl.style.display  = "block";
+      stageLabelEl.textContent    = `GAME CLEARED`;
+      answerAreaEl.style.display  = "none";
+      clearBlockEl.style.display  = "block";
     }
 
     function checkAnswer() {
       const userAnswer = normalize(answerInputEl.value);
-      const correct    = normalize(puzzles[currentStage].answer || "");
+      const correct    = normalize(puzzles[currentStage].answer || "");
 
       if (!userAnswer) {
         messageEl.textContent = "정답(코드)을 입력해 주세요.";
-        messageEl.className   = "message error";
+        messageEl.className   = "message error";
         return;
       }
 
       if (userAnswer === correct) {
         messageEl.textContent = "✅ 정답입니다! 다음 장으로 이동합니다.";
-        messageEl.className   = "message success";
+        messageEl.className   = "message success";
 
-        submitBtnEl.disabled   = true;
+        submitBtnEl.disabled   = true;
         answerInputEl.disabled = true;
         submitBtnEl.textContent = "✔ NEXT LOADING...";
 
@@ -1246,7 +1248,7 @@
         }, 900);
       } else {
         messageEl.textContent = "❌ 코드가 일치하지 않습니다. 다시 확인해 보세요.";
-        messageEl.className   = "message error";
+        messageEl.className   = "message error";
       }
     }
 

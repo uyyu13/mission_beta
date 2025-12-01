@@ -343,84 +343,89 @@
     }
 
     /* ------------------------------------------- */
-    /* 클리어 페이지 스타일 (여기가 중요) */
+    /* 클리어 페이지 스타일 */
     /* ------------------------------------------- */
     .clear-block {
-      margin-top: 24px;
+      /* 이 영역이 보일 때 다른 텍스트는 숨김 처리됨 */
+      margin-top: 60px; /* 상단 여백을 줘서 중앙 쯤에 오게 함 */
       font-size: 0.9rem;
       color: var(--text-main);
       display: none; /* JS로 제어 */
+      text-align: center; /* 내용 가운데 정렬 */
     }
 
     .clear-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 2px 8px;
+      padding: 4px 12px;
       border-radius: 999px;
-      border: 1px solid #2e7d32;
+      border: 2px solid #2e7d32; /* 테두리 조금 더 두껍게 */
       color: #2e7d32;
-      font-size: 0.74rem;
+      font-size: 0.85rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.16em;
       background: rgba(222, 247, 222, 0.9);
-      margin-bottom: 4px;
+      margin-bottom: 12px;
     }
 
     .clear-title {
-      font-weight: 600;
-      margin-bottom: 4px;
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #111;
     }
 
     .clear-text {
-      font-size: 0.88rem;
+      font-size: 0.95rem;
       color: var(--text-sub);
       line-height: 1.6;
-      margin-bottom: 15px;
+      margin-bottom: 30px;
     }
 
     /* 1. 설문조사 버튼 스타일 (노란색 강조) */
     .survey-btn-wrap {
       margin-top: 20px;
-      margin-bottom: 10px;
-      padding: 10px 0;
-      border-top: 1px dashed #c4a58c;
-      border-bottom: 1px dashed #c4a58c;
+      margin-bottom: 20px;
+      padding: 20px 0;
+      border-top: 2px dashed #c4a58c; /* 구분선 조금 더 진하게 */
+      border-bottom: 2px dashed #c4a58c;
     }
 
     .survey-btn {
       width: 100%;
-      padding: 12px 10px;
-      border-radius: 999px;
+      padding: 16px 10px; /* 버튼 높이 키움 */
+      border-radius: 12px; /* 둥글기 조정 */
       border: none;
       background: var(--survey-bg); /* #FFD94D */
       color: var(--highlight-text);
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
+      font-size: 1rem; /* 글씨 키움 */
+      font-weight: 800;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+      box-shadow: 0 5px 15px rgba(253, 224, 71, 0.4);
       transition: transform 0.05s ease, filter 0.06s ease;
       margin-top: 0;
     }
 
     .survey-btn:active {
-      transform: translateY(1px);
-      filter: brightness(0.93);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+      transform: translateY(2px);
+      filter: brightness(0.95);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     /* 2. 다시 시작하기 버튼 스타일 (투명 배경, 기본 스타일 복구) */
     .restart-btn {
-      margin-top: 10px;
+      margin-top: 20px;
       width: 100%;
-      padding: 8px 10px;
+      padding: 12px 10px;
       border-radius: 999px;
       border: 1px solid #111827;
       background: transparent; /* 투명 */
       color: #111827;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.16em;
       cursor: pointer;
@@ -430,6 +435,7 @@
     .restart-btn:active {
       transform: translateY(1px);
       filter: brightness(0.96);
+      background: rgba(0,0,0,0.05);
     }
   </style>
 </head>
@@ -464,31 +470,32 @@
           <div class="progress-bar-bg" style="display: none;"></div>
         </div>
 
-        <div class="subtitle" id="stageSubtitle">
-          힌트를 읽고 현장에서 얻은 코드를 입력하세요.
+        <div id="gameContent">
+            <div class="subtitle" id="stageSubtitle">
+            힌트를 읽고 현장에서 얻은 코드를 입력하세요.
+            </div>
+
+            <div class="subtitle-separator"></div>
+
+            <div class="story-text" id="storyText">
+            스테이지 내용이 여기에 표시됩니다.
+            </div>
+
+            <div id="answerArea">
+                <div class="answer-label-pill">CODE / 정답</div>
+                <label for="answerInput">CODE / 정답</label>
+                <input id="answerInput" type="text" inputmode="text" autocomplete="off" />
+                <button id="submitBtn">SUBMIT</button>
+                <div id="message" class="message"></div>
+
+                <div id="hintArea" class="hint-area">
+                    <details>
+                        <summary id="hintSummary">힌트 보기</summary>
+                        <div class="hint-content" id="hintContent"></div>
+                    </details>
+                </div>
+            </div>
         </div>
-
-        <div class="subtitle-separator"></div>
-
-        <div class="story-text" id="storyText">
-          스테이지 내용이 여기에 표시됩니다.
-        </div>
-
-        <div id="answerArea">
-          <div class="answer-label-pill">CODE / 정답</div>
-          <label for="answerInput">CODE / 정답</label>
-          <input id="answerInput" type="text" inputmode="text" autocomplete="off" />
-          <button id="submitBtn">SUBMIT</button>
-          <div id="message" class="message"></div>
-
-          <div id="hintArea" class="hint-area">
-              <details>
-                <summary id="hintSummary">힌트 보기</summary>
-                <div class="hint-content" id="hintContent"></div>
-              </details>
-          </div>
-        </div>
-
         <div class="clear-block" id="clearBlock">
           <div class="clear-badge">
             <span>🎉</span><span>ALL STAGES CLEARED</span>
@@ -1192,6 +1199,9 @@
     const answerAreaEl    = document.getElementById("answerArea");
     const clearBlockEl    = document.getElementById("clearBlock");
     const restartBtnEl    = document.getElementById("restartBtn");
+    
+    // 추가: 텍스트 영역을 통째로 제어하기 위한 변수
+    const gameContentEl   = document.getElementById("gameContent");
 
     function normalize(text) {
       return text.trim().replace(/\s/g, '').toLowerCase(); 
@@ -1203,6 +1213,14 @@
     }
 
     function renderStage() {
+      // 스테이지 렌더링 시에는 반드시 게임 컨텐츠(텍스트 등)를 보여준다
+      if (gameContentEl) {
+          gameContentEl.style.display = "block";
+      }
+      if (clearBlockEl) {
+          clearBlockEl.style.display = "none";
+      }
+
       const p = puzzles[currentStage];
 
       stageSubtitleEl.textContent = p.subtitle || "현장 로그를 읽고 코드를 입력하세요.";
@@ -1215,7 +1233,6 @@
       submitBtnEl.disabled   = false;
       submitBtnEl.textContent = "SUBMIT";
       answerAreaEl.style.display = "block";
-      clearBlockEl.style.display = "none";
 
       hintContentEl.textContent = p.hint || "제공된 힌트가 없습니다.";
 
@@ -1235,8 +1252,18 @@
 
     function showClear() {
       stageLabelEl.textContent    = `GAME CLEARED`;
-      answerAreaEl.style.display  = "none";
-      clearBlockEl.style.display  = "block";
+      
+      // ⭐ 여기가 핵심 수정 포인트 ⭐
+      // 1. 기존 게임 텍스트(스토리, 힌트, 입력창 등)를 담은 컨테이너를 통째로 숨깁니다.
+      if (gameContentEl) {
+          gameContentEl.style.display = "none";
+      }
+      
+      // 2. 클리어 화면만 보여줍니다.
+      if (clearBlockEl) {
+          clearBlockEl.style.display  = "block";
+      }
+      
       window.scrollTo(0, 0);
     }
 
